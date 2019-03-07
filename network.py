@@ -15,7 +15,6 @@ q2p = qiime2.sdk.PluginManager()
 #    print(value.methods.keys())
 ##############testing#################
 
-G=nx.DiGraph()
 
 def getNextParam(method, b):
     '''
@@ -51,9 +50,8 @@ def getCombinations(no_req):
             no_req_comb.append(list(c))
     return no_req_comb
 
-c_map = [] #color map
 
-def buildGraph():
+def buildGraph(G):
     for plugin in q2methods:
         method_list = plugin[1]
         for method in method_list:
@@ -78,19 +76,19 @@ def buildGraph():
             #there are combinations
             if non_req_in:
                 #construct combinations
-                print("COMBINATIONS: ")
-                print(getCombinations(non_req_in))
+                #print("COMBINATIONS: ")
+                #print(getCombinations(non_req_in))
                 combs = getCombinations(non_req_in)
 
                 for non_req in combs:
-                    print("DEBUG")
-                    print(non_req)
+                    #print("DEBUG")
+                    #print(non_req)
                     new_method_key= str(method)
                     str_non_req = [str(i) for i in non_req]
                     if str_non_req:
                         non_req_key = ";".join(str_non_req)
                         new_method_key += ";"+non_req_key
-                    print("new method"+new_method_key)
+                    #print("new method"+new_method_key)
 
                     #check if there exists a method node with same in-edges
                     if not G.has_node(new_method_key):
@@ -106,26 +104,30 @@ def buildGraph():
             else:
                 if not G.has_node(method):
                     G.add_node(method,value=method,color='red')
-                for key in req_in:
-                    G.add_edge(key, method)
-                for key in req_out:
-                    G.add_edge(method, key)
-                for key in non_req_out:
-                    G.add_edge(method, key)
+                    for key in req_in:
+                        G.add_edge(key, method)
+                    for key in req_out:
+                        G.add_edge(method, key)
+                    for key in non_req_out:
+                        G.add_edge(method, key)
 
 
-buildGraph()
-c_map = [n[1]['color'] for n in list(G.nodes(data=True))]
-print(c_map)
-print()
-nx.draw(G, node_color=c_map, with_labels=True)
-plt.draw()
-plt.show()
-plt.savefig('graph2.png')
-
-
-for i in G.nodes:
-    print(i)
-    print(G.in_edges(nbunch=i))
+'''
+if __name__ == '__main__':
+    G=nx.DiGraph()
+    c_map = [] #color map
+    buildGraph(G)
+    c_map = [n[1]['color'] for n in list(G.nodes(data=True))]
+    print(c_map)
     print()
+    nx.draw(G, node_color=c_map, with_labels=True)
+    plt.draw()
+    plt.show()
+    plt.savefig('graph2.png')
 
+
+    for i in G.nodes:
+        print(i)
+        print(G.in_edges(nbunch=i))
+        print()
+'''
